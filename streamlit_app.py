@@ -1,43 +1,36 @@
-import tkinter as tk
-window = tk.Tk()
-window.title("BMI Calculator")
-window.geometry("300x200")  # Set window size
-weight_label = tk.Label(window, text="Weight (kg):")
-weight_label.pack()
+import streamlit as st
 
-weight_entry = tk.Entry(window)
-weight_entry.pack()
+def calculate_bmi(weight, height):
+  """Calculates BMI based on weight and height."""
+  bmi = weight / (height * height)
+  return bmi
 
-height_label = tk.Label(window, text="Height (cm):")
-height_label.pack()
+def interpret_bmi(bmi):
+  """Interprets BMI value based on WHO classification."""
+  if bmi < 18.5:
+    return "Underweight"
+  elif bmi < 25:
+    return "Healthy weight"
+  elif bmi < 30:
+    return "Overweight"
+  else:
+    return "Obese"
 
-height_entry = tk.Entry(window)
-height_entry.pack()
-def calculate_bmi():
-  try:
-    weight = float(weight_entry.get())
-    height = float(height_entry.get()) / 100  # Convert cm to meters
+st.title("BMI Calculator")
 
-    bmi = weight / height**2
+# Input fields for weight and height
+weight = st.number_input("Enter your weight (kg):")
+height = st.number_input("Enter your height (m):")
 
-    bmi_label = tk.Label(window, text="BMI: {:.2f}".format(bmi))
-    bmi_label.pack()
+# Calculate BMI button
+if st.button("Calculate BMI"):
+  if weight > 0 and height > 0:
+    bmi = calculate_bmi(weight, height)
+    bmi_interpretation = interpret_bmi(bmi)
+    
+    # Display BMI and interpretation
+    st.write("Your BMI is:", round(bmi, 2))
+    st.write("BMI interpretation:", bmi_interpretation)
+  else:
+    st.warning("Please enter valid weight and height (positive values).")
 
-    category_label = tk.Label(window, text="")
-    if bmi < 18.5:
-      category_label.config(text="Category: Underweight")
-    elif bmi < 25:
-      category_label.config(text="Category: Normal")
-    elif bmi < 30:
-      category_label.config(text="Category: Overweight")
-    else:
-      category_label.config(text="Category: Obese")
-    category_label.pack()
-
-  except ValueError:
-    # Handle invalid input (non-numeric values)
-    pass
-
-calculate_button = tk.Button(window, text="Calculate", command=calculate_bmi)
-calculate_button.pack()
-window.mainloop()
